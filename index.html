@@ -75,6 +75,9 @@
             font-size: 12px;
             color: #666;
         }
+            .container {
+            margin: 20px;
+        }
     </style>
 </head>
 
@@ -84,7 +87,7 @@
     <h2>🔐 Caesar Cipher</h2>
 
     <label>ข้อความ</label>
-    <textarea id="text" rows="4"></textarea>
+    <textarea id="text1" rows="4"></textarea>
 
     <label>Key (จำนวนการเลื่อน)</label>
     <input type="number" id="key" value="3">
@@ -95,25 +98,78 @@
     </div>
 
     <label>ผลลัพธ์</label>
-    <textarea id="result" rows="4" readonly></textarea>
+    <textarea id="result1" rows="4" readonly></textarea>
 
     <footer>
         Caesar Cipher | HTML & JavaScript
     </footer>
 </div>
 
+<div class="container">
+    <h2>🔐 Number Cipher</h2>
+
+    <label>ข้อความ</label>
+    <textarea id="text2" rows="4"></textarea>
+
+    <div class="buttons">
+        <button class="encrypt" onclick="numberEncrypt()">เข้ารหัส</button>
+        <button class="decrypt" onclick="numberDecrypt()">ถอดรหัส</button>
+    </div>
+
+    <label>ผลลัพธ์</label>
+    <textarea id="result2" rows="4" readonly></textarea>
+
+    <footer>
+        Number Cipher | HTML & JavaScript
+    </footer>
+</div>
+
 <!-- ส่วนการทำงาน (JavaScript) -->
 <script>
+    function numberEncrypt() {
+    let text = document.getElementById("text2").value;
+    let result = "";
+
+    for (let i = 0; i < text.length; i++) {
+        let char = text[i].toUpperCase();
+
+        if (char >= 'A' && char <= 'Z') {
+            let number = char.charCodeAt(0) - 64;
+            result += number + " ";
+        } else {
+            result += char;
+        }
+    }
+
+    document.getElementById("result2").value = result.trim();
+}
+    function numberDecrypt() {
+        let text = document.getElementById("text2").value;
+        let parts = text.split(" ");
+        let result = "";
+
+        for (let i = 0; i < parts.length; i++) {
+            let num = parseInt(parts[i]);
+
+            if (num >= 1 && num <= 26) {
+                result += String.fromCharCode(num + 64);
+            } else {
+                result += parts[i];
+            }
+        }
+
+    document.getElementById("result2").value = result;
+}
 function encrypt() {
-    let text = document.getElementById("text").value;
+    let text = document.getElementById("text1").value;
     let key = parseInt(document.getElementById("key").value);
-    document.getElementById("result").value = caesar(text, key);
+    document.getElementById("result1").value = caesar(text, key);
 }
 
 function decrypt() {
-    let text = document.getElementById("text").value;
+    let text = document.getElementById("text1").value;
     let key = parseInt(document.getElementById("key").value);
-    document.getElementById("result").value = caesar(text, -key);
+    document.getElementById("result1").value = caesar(text, -key);
 }
 
 function caesar(str, shift) {
