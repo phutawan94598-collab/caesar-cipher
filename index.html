@@ -90,7 +90,7 @@
     <textarea id="text1" rows="4"></textarea>
 
     <label>Key (จำนวนการเลื่อน)</label>
-    <input type="number" id="key" value="3">
+    <input type="number" id="key" value="0" min="0">
 
     <div class="buttons">
         <button class="encrypt" onclick="encrypt()">เข้ารหัส</button>
@@ -110,6 +110,9 @@
 
     <label>ข้อความ</label>
     <textarea id="text2" rows="4"></textarea>
+    <label>Length Key (จำนวนตัวอักษร)</label>
+    <input type="number" id="lenKey" min="0" value="0">
+
 
     <div class="buttons">
         <button class="encrypt" onclick="numberEncrypt()">เข้ารหัส</button>
@@ -128,38 +131,55 @@
 <script>
     function numberEncrypt() {
     let text = document.getElementById("text2").value;
-    let result = "";
+    let lenBox = document.getElementById("lenKey");
+    let result = [];
 
     for (let i = 0; i < text.length; i++) {
-        let char = text[i].toUpperCase();
+        let c = text[i];
 
-        if (char >= 'A' && char <= 'Z') {
-            let number = char.charCodeAt(0) - 64;
-            result += number + " ";
+        if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) {
+            result.push(c.toUpperCase().charCodeAt(0) - 64);
         } else {
-            result += char;
+            result.push("0" + c.charCodeAt(0));
         }
     }
 
-    document.getElementById("result2").value = result.trim();
+    // ใส่ Length Key
+    lenBox.value = text.length;
+
+    // แสดงเฉพาะตัวเลขเข้ารหัส
+    document.getElementById("result2").value = result.join("-");
 }
+
     function numberDecrypt() {
-        let text = document.getElementById("text2").value;
-        let parts = text.split(" ");
-        let result = "";
+    let cipher = document.getElementById("text2").value;
+    let lenKey = parseInt(document.getElementById("lenKey").value);
 
-        for (let i = 0; i < parts.length; i++) {
-            let num = parseInt(parts[i]);
+    let parts = cipher.split("-");
+    let result = "";
 
+    for (let i = 0; i < parts.length; i++) {
+        let p = parts[i];
+
+        if (p.startsWith("0")) {
+            result += String.fromCharCode(parseInt(p.substring(1)));
+        } else {
+            let num = parseInt(p);
             if (num >= 1 && num <= 26) {
                 result += String.fromCharCode(num + 64);
-            } else {
-                result += parts[i];
             }
         }
+    }
+
+    // ตรวจ Length Key
+    if (!isNaN(lenKey) && result.length !== lenKey) {
+        alert("❌ Length Key ไม่ตรง ข้อมูลถูกแก้ไขหรือหาย");
+        return;
+    }
 
     document.getElementById("result2").value = result;
 }
+
 function encrypt() {
     let text = document.getElementById("text1").value;
     let key = parseInt(document.getElementById("key").value);
